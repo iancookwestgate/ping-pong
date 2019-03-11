@@ -3,85 +3,39 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
-
 module.exports = {
-
-  entry: './src/index.js',
+  entry: './src/main.js',
   output: {
-    filename: 'main.js',
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
-
-
   devtool: 'eval-source-map',
   devServer: {
     contentBase: './dist'
   },
-
+  plugins: [
+    new UglifyJsPlugin({ sourceMap: true }),
+    new CleanWebpackPlugin(['dist']),
+    new HtmlWebpackPlugin({
+      title: 'Ping Pong',
+      template: './src/ping-pong.html',
+      inject: 'body'
+    })
+  ],
   module: {
-
-    rules: [
-      // configurations for loaders will go here!
-
-      {
-        test: /\.scss$/,
-        use: [
-            'style-loader',
-            'css-loader',
-            'sass-loader'
-        ]
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: "eslint-loader"
-      },
-      {
-        test: /\.(gif|png|jpe?g)$/,
+      rules: [
+        {
+          test: /\.scss$/,
           use: [
-            {
-              loader: 'file-loader',
-              options: {
-                name: '[name].[ext]',
-                outputPath: 'assets/images/'
-              }
-            }
+            'style-loader',
+            'css-loader'
           ]
         },
-
         {
-        test:/\.html$/,
-        use: [
-          'html-loader'
-        ]
-      },
-
-    ]
-  },
-
-
-  plugins: [
-    new HtmlWebpackPlugin({
-      inject: 'body',
-      template: './src/index.html',
-      filename: 'index.html',
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true
-      }
-    }),
-
-    new HtmlWebpackPlugin({
-      template: './src/example.html',
-      filename: 'example.html',
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true
-      }
-    }),
-    new UglifyJsPlugin(),
-
-    new CleanWebpackPlugin(['dist'])
-  ]
-
-};
+          test: /\.js$/,
+          exclude: /node_modules/,
+          loader: "eslint-loader"
+        }
+      ]
+    }
+  };
